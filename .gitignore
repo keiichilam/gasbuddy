@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/*.env
+logs/*.log
+
+.playwright-mcp/

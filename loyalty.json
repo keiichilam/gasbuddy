@@ -1,0 +1,78 @@
+{
+  "programs": [
+    {
+      "id": "petro_rbc",
+      "name": "Petro-Canada + RBC",
+      "description": "-3 c/L with linked RBC card",
+      "discount_cpl": 3.0,
+      "brands": [
+        "petro-canada"
+      ]
+    },
+    {
+      "id": "esso_pco",
+      "name": "Esso / Mobil + PC Optimum",
+      "description": "-2 c/L estimated point value",
+      "discount_cpl": 2.0,
+      "brands": [
+        "esso",
+        "mobil"
+      ]
+    },
+    {
+      "id": "journie",
+      "name": "Journie Rewards",
+      "description": "-5 c/L estimated value at Chevron, Fas Gas, Ultramar, and Pioneer",
+      "discount_cpl": 5.0,
+      "brands": [
+        "chevron",
+        "fas gas",
+        "ultramar",
+        "pioneer"
+      ]
+    },
+    {
+      "id": "shell_bcaa",
+      "name": "Shell + BCAA",
+      "description": "-3 c/L BCAA member discount",
+      "discount_cpl": 3.0,
+      "brands": [
+        "shell"
+      ]
+    },
+    {
+      "id": "coop",
+      "name": "Co-op Gas Bars",
+      "description": "-2 c/L estimated annual rebate",
+      "discount_cpl": 2.0,
+      "brands": [
+        "co-op",
+        "peninsula co-op",
+        "armstrong co-op"
+      ]
+    },
+    {
+      "id": "domo",
+      "name": "Domo Club",
+      "description": "-4 c/L Monday and Thursday Rollback Days only",
+      "discount_cpl": 4.0,
+      "brands": [
+        "domo"
+      ],
+      "weekdays": [
+        0,
+        3
+      ]
+    },
+    {
+      "id": "supersave",
+      "name": "Super Save Gas",
+      "description": "Low street price, no extra discount",
+      "discount_cpl": 0.0,
+      "brands": [
+        "super save",
+        "supersave"
+      ]
+    }
+  ]
+}

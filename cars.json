@@ -1,0 +1,21 @@
+{
+  "home": {
+    "lat": 49.2827,
+    "lng": -123.1207,
+    "label": "Home"
+  },
+  "fuel": "regular_gas",
+  "include_victoria": true,
+  "cars": [
+    {
+      "name": "Car 1",
+      "l_per_100km": 10.0,
+      "tank_litres": 50
+    },
+    {
+      "name": "Car 2",
+      "l_per_100km": 8.5,
+      "tank_litres": 45
+    }
+  ]
+}

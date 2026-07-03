@@ -1,0 +1,23 @@
+[Unit]
+Description=OSRM routing server (British Columbia)
+After=docker.service network-online.target
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=10
+ExecStartPre=-/usr/bin/docker stop osrm-bc
+ExecStartPre=-/usr/bin/docker rm osrm-bc
+ExecStart=/usr/bin/docker run --rm \
+    --name osrm-bc \
+    -p 127.0.0.1:5000:5000 \
+    -v /opt/osrm:/data:ro \
+    osrm/osrm-backend:latest \
+    osrm-routed --algorithm mld --max-table-size 500 \
+    /data/british-columbia-latest.osrm
+ExecStop=/usr/bin/docker stop osrm-bc
+
+[Install]
+WantedBy=multi-user.target

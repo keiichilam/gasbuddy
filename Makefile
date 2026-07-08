@@ -2,6 +2,9 @@
 
 PORT ?= 20443
 HOST ?= 127.0.0.1
+# Deployed dashboard serves TLS; local `make dashboard` serves plain HTTP.
+# Override for local dev with: make health SCHEME=http
+SCHEME ?= https
 
 scan:
 	python3 scan.py
@@ -18,4 +21,4 @@ cron:
 	bash scripts/install_cron.sh
 
 health:
-	curl -fsS http://$(HOST):$(PORT)/api/health
+	curl -fsSk $(SCHEME)://$(HOST):$(PORT)/api/health

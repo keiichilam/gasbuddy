@@ -1,0 +1,10 @@
+/opt/gasbuddy/logs/scan.log {
+    weekly
+    rotate 8
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    su bgservice bgservice
+}

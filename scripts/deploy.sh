@@ -33,6 +33,11 @@ if [[ -f "$DEST/deploy/osrm.service" ]]; then
     cp "$DEST/deploy/osrm.service" "/etc/systemd/system/osrm.service"
 fi
 
+# Install logrotate config for the hourly scan log
+if [[ -f "$DEST/deploy/gasbuddy.logrotate" ]]; then
+    cp "$DEST/deploy/gasbuddy.logrotate" "/etc/logrotate.d/gasbuddy"
+fi
+
 systemctl daemon-reload
 systemctl enable "$SERVICE"
 systemctl restart "$SERVICE"

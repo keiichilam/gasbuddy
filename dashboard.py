@@ -378,6 +378,14 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         parsed = urlparse(self.path)
         if self.handle_auth_get(parsed):
             return
+        # Health check is intentionally public so uptime monitors can reach it
+        # without a session; it exposes only liveness and last-scan metadata.
+        if parsed.path == "/api/health":
+            try:
+                with contextlib.closing(connect(self.db_path)) as conn:
+                    return self.send_json(health(conn))
+            except Exception:
+                return self.send_json({"error": "internal error"}, status=500)
         if not self.ensure_authenticated(parsed):
             return
         if parsed.path == "/":
@@ -398,8 +406,6 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                     })
                 if parsed.path == "/api/summary":
                     return self.send_json(summary(conn))
-                if parsed.path == "/api/health":
-                    return self.send_json(health(conn))
                 if parsed.path == "/api/trends":
                     qs = parse_qs(parsed.query)
                     hours = clamp_int((qs.get("hours") or ["168"])[0], default=168, low=1, high=8760)

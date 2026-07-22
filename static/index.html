@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0B0B0F">
+  <meta name="theme-color" content="#0D141A">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>GasWatch · BC Lower Mainland</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Doto:wght@300..900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="/styles.css?v=20260527-trip-loyalty-visible">
+  <link rel="stylesheet" href="/styles.css?v=20260710-route-planner">
 </head>
 <body>
   <header class="topbar">
@@ -26,7 +26,7 @@
         <p class="subhead">BC Lower Mainland &middot; Hourly Collection</p>
       </div>
     </div>
-    <div class="status-wrap">
+    <div class="status-wrap" aria-live="polite">
       <div class="status-dot" id="statusDot"></div>
       <span id="scanStatus">Connecting&hellip;</span>
       <button class="settings-btn" id="settingsBtn" title="Cars &amp; Settings">
@@ -135,11 +135,24 @@
     <!-- ── Trip Pane ──────────────────────────────────────── -->
     <div class="view-pane active" data-view="trip" id="paneTrip">
 
+      <section class="trip-hero" aria-labelledby="tripHeroTitle">
+        <div>
+          <p class="eyebrow">Route-aware fuel finder</p>
+          <h2 id="tripHeroTitle">Make the next stop count.</h2>
+          <p class="hero-copy">Build a route, factor in your vehicle and loyalty savings, then choose the stop with the lowest real trip cost.</p>
+        </div>
+        <div class="trip-hero-steps" aria-label="How route planning works">
+          <span><b>1</b> Set your route</span>
+          <span><b>2</b> Add your vehicle</span>
+          <span><b>3</b> Compare real costs</span>
+        </div>
+      </section>
+
       <!-- Cheapest Near Me (shown when triggered from trip view) -->
       <section class="panel station-focus" id="nearMe" hidden>
         <div class="panel-head focus-head">
           <div>
-            <h2>Cheapest Near Me</h2>
+            <h2>Best prices near you</h2>
             <p id="nearMeMeta" class="panel-note"></p>
           </div>
           <div class="controls">
@@ -169,11 +182,14 @@
       </section>
 
       <!-- Trip Calculator -->
-      <section class="panel" id="tripCalcPanel">
+      <section class="panel trip-planner" id="tripCalcPanel">
         <div class="panel-head">
-          <h2>Trip Calculator</h2>
+          <div>
+            <h2>Plan a fuel stop</h2>
+            <p class="panel-note">Start with a route, then compare the stations that make sense for your tank.</p>
+          </div>
           <div class="controls">
-            <button class="near-me-btn" id="nearMeBtn" title="Find cheapest gas near my location">Near Me</button>
+            <button class="near-me-btn" id="nearMeBtn" title="Find the best recent prices near your location">Use my location</button>
           </div>
         </div>
 
@@ -206,7 +222,7 @@
             <option value="premium_gas">Premium</option>
             <option value="diesel">Diesel</option>
           </select>
-          <button id="tripCalcBtn" class="save-btn" disabled>Find &rarr;</button>
+          <button id="tripCalcBtn" class="save-btn trip-submit" disabled>Find best stop</button>
         </div>
 
         <!-- Map (below controls) -->
@@ -221,7 +237,10 @@
         <!-- Results (hidden until calc runs) -->
         <div id="tripResults" hidden>
           <div class="panel-head focus-head trip-results-head">
-            <p id="tripResultMeta" class="panel-note"></p>
+            <div>
+              <h3>Best stops on your route</h3>
+              <p id="tripResultMeta" class="panel-note" aria-live="polite"></p>
+            </div>
             <div class="controls">
               <div id="tripResultBest" class="best-price"></div>
               <select class="rows-select" id="limit-tripResultRows" aria-label="Rows to show">
@@ -434,6 +453,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="/app.js?v=20260527-trip-loyalty-visible"></script>
+  <script src="/app.js?v=20260708-dusk-pylon"></script>
 </body>
 </html>

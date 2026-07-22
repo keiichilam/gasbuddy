@@ -131,8 +131,8 @@ function drawChartMessage(message) {
   destroyChart();
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#8C877E";
-  ctx.font = "13px 'Outfit', sans-serif";
+  ctx.fillStyle = "#5A6E78";
+  ctx.font = "13px 'Inter', sans-serif";
   ctx.fillText(message, 20, 44);
 }
 
@@ -283,8 +283,8 @@ let priceMapMarkers = [];
 let priceMapMode = false;
 
 function makePriceBubble(price, isBest) {
-  const bg = isBest ? "#4caf50" : "#2a2a3a";
-  const border = isBest ? "#81c784" : "#444";
+  const bg = isBest ? "#0F3D2C" : "#1E2E38";
+  const border = isBest ? "#3FE0A3" : "#263A46";
   return L.divIcon({
     className: "",
     html: `<div style="background:${bg};border:1.5px solid ${border};border-radius:4px;padding:2px 5px;color:#fff;font-size:11px;font-weight:700;font-family:Outfit,sans-serif;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.4);">${fmtPrice(price)}</div>`,
@@ -448,20 +448,20 @@ function makeChart(canvas, datasets, showLegend, interactionMode = "index") {
             tooltipFormat:  "MMM d, HH:mm",
             displayFormats: { hour: "MMM d HH:mm", day: "MMM d" },
           },
-          grid:   { color: "#242432" },
-          border: { color: "#323240" },
+          grid:   { color: "#1B2A33" },
+          border: { color: "#263A46" },
           ticks:  {
-            color: "#4C4C60",
-            font:  { family: "'Outfit', sans-serif", size: 11 },
+            color: "#5A6E78",
+            font:  { family: "'Inter', sans-serif", size: 11 },
             maxTicksLimit: 8,
           },
         },
         y: {
-          grid:   { color: "#242432" },
-          border: { color: "#323240" },
+          grid:   { color: "#1B2A33" },
+          border: { color: "#263A46" },
           ticks:  {
-            color: "#4C4C60",
-            font:  { family: "'Outfit', sans-serif", size: 11 },
+            color: "#5A6E78",
+            font:  { family: "'Inter', sans-serif", size: 11 },
             callback: v => Number(v).toFixed(0) + "¢",
           },
         },
@@ -470,21 +470,21 @@ function makeChart(canvas, datasets, showLegend, interactionMode = "index") {
         legend: showLegend ? {
           position: "bottom",
           labels: {
-            color:     "#A8A8BE",
-            font:      { family: "'Outfit', sans-serif", size: 11 },
+            color:     "#9FB2BC",
+            font:      { family: "'Inter', sans-serif", size: 11 },
             boxWidth:  16,
             boxHeight: 2,
             padding:   16,
           },
         } : { display: false },
         tooltip: {
-          backgroundColor: "#1A1A22",
-          borderColor:     "#323240",
+          backgroundColor: "#1E2E38",
+          borderColor:     "#263A46",
           borderWidth:     1,
-          titleColor:      "#F5A623",
-          bodyColor:       "#A8A8BE",
-          titleFont:       { family: "'Outfit', sans-serif", size: 12, weight: "600" },
-          bodyFont:        { family: "'Outfit', sans-serif", size: 12 },
+          titleColor:      "#FFB13C",
+          bodyColor:       "#9FB2BC",
+          titleFont:       { family: "'Inter', sans-serif", size: 12, weight: "600" },
+          bodyFont:        { family: "'Inter', sans-serif", size: 12 },
           padding:         12,
           callbacks: {
             label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}¢`,
@@ -504,8 +504,8 @@ function renderCityChart(points) {
   if (!filtered.length) {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#8C877E";
-    ctx.font = "13px 'Outfit', sans-serif";
+    ctx.fillStyle = "#5A6E78";
+    ctx.font = "13px 'Inter', sans-serif";
     ctx.fillText("No trend data collected yet.", 20, 44);
     return;
   }
@@ -797,7 +797,7 @@ function placeHomePin(lat, lng) {
   if (homeMapPin) {
     homeMapPin.setLatLng([lat, lng]);
   } else {
-    homeMapPin = L.marker([lat, lng], { icon: makePinIcon("#F5A623", "H") }).addTo(homeMap);
+    homeMapPin = L.marker([lat, lng], { icon: makePinIcon("#FFB13C", "H") }).addTo(homeMap);
   }
 }
 
@@ -1053,9 +1053,12 @@ let tripClickTarget = "dest";
 let tripAutoCalcTimer = null;
 let tripStationLayers = [];
 let tripRouteLayer    = null;
+let tripCalcRequestId = 0;
+let tripRouteRequestId = 0;
+let tripCalcInFlight = false;
 
 const STATION_COLORS = ["#1E4A38", "#2D7A55", "#3D9970", "#5EB388", "#8BCFAB",
-                        "#A8D8BC", "#C5E8D4", "#8C877E"];
+                        "#A8D8BC", "#C5E8D4", "#5A6E78"];
 
 function makePinIcon(color, label) {
   return L.divIcon({
@@ -1088,17 +1091,22 @@ function populateTripCarSelector(cars) {
 
 function updateRangeHint() {
   const hint = document.getElementById("tripRangeHint");
-  if (!hint) return;
+  const input = document.getElementById("tripTankPct");
+  if (!hint || !input) return;
   const opt = document.getElementById("tripCarSelect")?.selectedOptions[0];
   const tankLitres = parseFloat(opt?.dataset.tank);
   const lPer100km  = parseFloat(opt?.dataset.eff);
-  const tankPct    = parseFloat(document.getElementById("tripTankPct")?.value);
-  if (isNaN(tankLitres) || isNaN(lPer100km) || isNaN(tankPct)) {
+  const tankPct    = parseFloat(input.value);
+  const validTankPct = Number.isFinite(tankPct) && tankPct >= 0 && tankPct < 100;
+  input.setCustomValidity(validTankPct ? "" : "Enter a tank level from 0 to 99%.");
+  if (!Number.isFinite(tankLitres) || tankLitres <= 0 || !Number.isFinite(lPer100km) || lPer100km <= 0 || !validTankPct) {
     hint.textContent = "";
+    updateTripCalcButton();
     return;
   }
   const remainingKm = (tankLitres * tankPct / 100) / lPer100km * 100;
-  hint.textContent = `~${Math.round(remainingKm)} km remaining`;
+  hint.textContent = "~" + Math.round(remainingKm) + " km remaining";
+  updateTripCalcButton();
 }
 
 function currentTripFuel() {
@@ -1114,16 +1122,29 @@ function currentTripFuelLabel() {
 function currentTripFuelPlan() {
   const opt = document.getElementById("tripCarSelect")?.selectedOptions[0];
   const lPer100km = parseFloat(opt?.dataset.eff);
-  const tankLitres = parseFloat(opt?.dataset.tank) || 50;
+  const tankLitres = parseFloat(opt?.dataset.tank);
   const tankPct = parseFloat(document.getElementById("tripTankPct")?.value);
-  if (!opt || document.getElementById("tripCarSelect")?.value === "" || isNaN(lPer100km)) {
+  if (!opt || document.getElementById("tripCarSelect")?.value === ""
+      || !Number.isFinite(lPer100km) || lPer100km <= 0
+      || !Number.isFinite(tankLitres) || tankLitres <= 0
+      || !Number.isFinite(tankPct) || tankPct < 0 || tankPct >= 100) {
     return null;
   }
-  const fillLitres = Math.max(1, isNaN(tankPct) ? tankLitres : tankLitres * (1 - tankPct / 100));
-  const remainingKm = !isNaN(tankPct)
-    ? (tankLitres * tankPct / 100) / lPer100km * 100
-    : null;
+  const fillLitres = tankLitres * (1 - tankPct / 100);
+  const remainingKm = (tankLitres * tankPct / 100) / lPer100km * 100;
   return { lPer100km, tankLitres, tankPct, fillLitres, remainingKm };
+}
+
+function invalidateTripCalculation({ clearRoute = false } = {}) {
+  tripCalcRequestId += 1;
+  tripRouteRequestId += 1;
+  tripCalcInFlight = false;
+  const btn = document.getElementById("tripCalcBtn");
+  if (btn) btn.textContent = "Find cheapest station";
+  if (clearRoute && tripRouteLayer && tripMap) {
+    tripMap.removeLayer(tripRouteLayer);
+    tripRouteLayer = null;
+  }
 }
 
 async function initTripMap() {
@@ -1132,7 +1153,9 @@ async function initTripMap() {
   carsConfig = cfg;
 
   const { lat, lng, label } = cfg.home || {};
-  tripHomeConfig = lat && lng ? { lat, lng, label: label || "Home" } : null;
+  tripHomeConfig = Number.isFinite(lat) && Number.isFinite(lng)
+    ? { lat, lng, label: label || "Home" }
+    : null;
 
   // Populate car selector
   populateTripCarSelector(cfg.cars);
@@ -1178,13 +1201,14 @@ function setTripEndpoint(target, lat, lng, label) {
 }
 
 function setTripDest(lat, lng, label) {
+  invalidateTripCalculation({ clearRoute: true });
   tripDestCoords = { lat, lng };
   const ll = [lat, lng];
   if (tripDestMarker) {
     tripDestMarker.setLatLng(ll);
     tripDestMarker.setTooltipContent(label || "Destination");
   } else if (tripMap) {
-    tripDestMarker = L.marker(ll, { icon: makePinIcon("#FF4F4F", "D"), zIndexOffset: 900 })
+    tripDestMarker = L.marker(ll, { icon: makePinIcon("#FF6B6B", "D"), zIndexOffset: 900 })
       .addTo(tripMap)
       .bindTooltip(label || "Destination", { permanent: false });
   }
@@ -1193,12 +1217,13 @@ function setTripDest(lat, lng, label) {
 }
 
 function setTripHome(lat, lng, label) {
+  invalidateTripCalculation({ clearRoute: true });
   tripHomeCoords = { lat, lng };
   if (tripHomeMarker) {
     tripHomeMarker.setLatLng([lat, lng]);
     tripHomeMarker.setTooltipContent(label || "Start");
   } else if (tripMap) {
-    tripHomeMarker = L.marker([lat, lng], { icon: makePinIcon("#F5A623", "H"), zIndexOffset: 1000 })
+    tripHomeMarker = L.marker([lat, lng], { icon: makePinIcon("#FFB13C", "H"), zIndexOffset: 1000 })
       .addTo(tripMap)
       .bindTooltip(label || "Start", { permanent: false });
   }
@@ -1208,6 +1233,7 @@ function setTripHome(lat, lng, label) {
 }
 
 function clearTripEndpoint(target) {
+  invalidateTripCalculation({ clearRoute: true });
   if (target === "start") {
     tripHomeCoords = null;
     if (tripHomeMarker && tripMap) {
@@ -1227,7 +1253,7 @@ function clearTripEndpoint(target) {
 
 function updateTripCalcButton() {
   const btn = document.getElementById("tripCalcBtn");
-  if (btn) btn.disabled = !(tripHomeCoords && tripDestCoords);
+  if (btn) btn.disabled = tripCalcInFlight || !(tripHomeCoords && tripDestCoords && currentTripFuelPlan());
 }
 
 function updateTripMapHint() {
@@ -1331,6 +1357,8 @@ async function runTripCalc() {
   if (!plan) return;
 
   const btn = document.getElementById("tripCalcBtn");
+  const requestId = ++tripCalcRequestId;
+  tripCalcInFlight = true;
   btn.textContent = "Calculating…";
   btn.disabled = true;
 
@@ -1342,8 +1370,8 @@ async function runTripCalc() {
 
   try {
     const params = new URLSearchParams({
-      dest_lat:    tripDestCoords.lat,
-      dest_lng:    tripDestCoords.lng,
+      dest_lat:    dest.lat,
+      dest_lng:    dest.lng,
       l_per_100km: lPer100km,   // now a parsed number, not a raw string
       fill_litres: fillLitres,
       fuel,
@@ -1400,21 +1428,18 @@ function renderTripResults(data) {
 
   bestEl.innerHTML = `<span>Best</span><strong>${fmtPrice(stations[0].effective_cpl)}</strong>`;
 
-  // Road distance ≈ 1.25× straight-line; apply correction for both station and destination checks
   const remainingKm = data.remainingKm;
-  const ROAD_FACTOR = 1.25;
   const banner = document.getElementById("tripRangeBanner");
-  if (remainingKm != null && data.direct_km * ROAD_FACTOR > remainingKm) {
+  if (remainingKm != null && data.direct_km > remainingKm) {
     banner.hidden = false;
     banner.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1L13 12H1L7 1Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><line x1="7" y1="5" x2="7" y2="8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="10.5" r="0.7" fill="currentColor"/></svg>
-      Your current tank (~${Math.round(remainingKm)} km est.) may not reach the destination (~${Math.round(data.direct_km * ROAD_FACTOR)} km by road). Fill up en route.`;
+      Your current tank (~${Math.round(remainingKm)} km est.) may not reach the destination (~${Math.round(data.direct_km)} km by road). Fill up en route.`;
   } else {
     banner.hidden = true;
   }
 
   tbody.innerHTML = applyLimit(stations, "tripResultRows").map((r, i) => {
-    const outOfRange = !!r.out_of_range || (remainingKm != null && r.home_to_station_km != null
-      && r.home_to_station_km * ROAD_FACTOR > remainingKm);
+    const outOfRange = !!r.out_of_range || false;
     const disc = r.loyalty_discount_cpl || 0;
     const loyaltyBadge = disc > 0 ? `<span class="loyalty-tag">−${disc}¢</span>` : "";
     const effectivePrice = r.effective_cpl != null ? r.effective_cpl : r.price - disc;
@@ -1483,6 +1508,9 @@ function renderTripResults(data) {
 
 async function drawTripRoute(stationLat, stationLng) {
   if (!tripMap || !tripHomeCoords || !tripDestCoords) return;
+  const requestId = ++tripRouteRequestId;
+  const home = { ...tripHomeCoords };
+  const dest = { ...tripDestCoords };
 
   // Highlight the active row
   document.querySelectorAll("#tripResultRows tr").forEach(r => {
@@ -1493,21 +1521,22 @@ async function drawTripRoute(stationLat, stationLng) {
 
   try {
     const params = new URLSearchParams({
-      home_lat:    tripHomeCoords.lat,
-      home_lng:    tripHomeCoords.lng,
+      home_lat:    home.lat,
+      home_lng:    home.lng,
       station_lat: stationLat,
       station_lng: stationLng,
       dest_lat:    tripDestCoords.lat,
       dest_lng:    tripDestCoords.lng,
     });
-    const data = await api(`/api/route?${params}`);
+    const data = await api(`/api/route?`);
+    if (requestId !== tripRouteRequestId) return;
 
     if (tripRouteLayer) { tripMap.removeLayer(tripRouteLayer); tripRouteLayer = null; }
 
     // GeoJSON coords are [lon, lat]; Leaflet wants [lat, lon]
     const latlngs = data.coordinates.map(([lon, lat]) => [lat, lon]);
     tripRouteLayer = L.polyline(latlngs, {
-      color: "#4a9eff",
+      color: "#5AA9FF",
       weight: 4,
       opacity: 0.85,
       lineJoin: "round",
@@ -1537,8 +1566,20 @@ switchView(localStorage.getItem("gaswatch-view") || "trip");
 document.getElementById("tripCalcBtn").addEventListener("click", runTripCalc);
 document.getElementById("tripStartSource").addEventListener("change", e => applyTripSource("start", e.target.value));
 document.getElementById("tripDestSource").addEventListener("change", e => applyTripSource("dest", e.target.value));
-document.getElementById("tripCarSelect").addEventListener("change", () => { updateRangeHint(); scheduleTripAutoCalc(); });
-document.getElementById("tripTankPct").addEventListener("input", updateRangeHint);
+document.getElementById("tripCarSelect").addEventListener("change", () => {
+  invalidateTripCalculation();
+  updateRangeHint();
+  scheduleTripAutoCalc();
+});
+document.getElementById("tripTankPct").addEventListener("input", () => {
+  invalidateTripCalculation();
+  updateRangeHint();
+  if (currentTripFuelPlan()) scheduleTripAutoCalc();
+});
+document.getElementById("tripFuelSelect").addEventListener("change", () => {
+  invalidateTripCalculation();
+  scheduleTripAutoCalc();
+});
 initTripMap();
 
 document.getElementById("fuelSelect").addEventListener("change", refresh);

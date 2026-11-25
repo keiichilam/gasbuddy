@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .config import CITIES, DB_PATH
+from .config import ADMIN_EMAIL, CITIES, DB_PATH
 
 
 CITY_SLUGS_BY_LOCALITY = {
@@ -132,7 +132,7 @@ def init_db(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE stations ADD COLUMN country TEXT")
     conn.execute(
         "INSERT OR IGNORE INTO users (email, role) VALUES (?, ?)",
-        ("keiicilam@gmail.com", "admin")
+        (ADMIN_EMAIL, "admin")
     )
     conn.executemany(
         """

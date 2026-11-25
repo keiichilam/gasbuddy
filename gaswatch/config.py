@@ -18,6 +18,7 @@ DEFAULT_PAGE_DELAY = float(os.getenv("GASWATCH_PAGE_DELAY", "2.0"))
 DEFAULT_CITY_DELAY = float(os.getenv("GASWATCH_CITY_DELAY", "15.0"))
 DEFAULT_RETRIES = int(os.getenv("GASWATCH_RETRIES", "2"))
 DEFAULT_RETRY_DELAY = float(os.getenv("GASWATCH_RETRY_DELAY", "30.0"))
+ADMIN_EMAIL = os.getenv("GASWATCH_ADMIN_EMAIL", "admin@example.com").strip().lower()
 
 FUEL_PRODUCTS = {"regular_gas", "midgrade_gas", "premium_gas", "diesel"}
 

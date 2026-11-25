@@ -13,9 +13,9 @@ Environment=OSRM_URL=http://127.0.0.1:5000
 EnvironmentFile=-/opt/gasbuddy/data/gaswatch.env
 Environment=GASWATCH_HOST=0.0.0.0
 Environment=GASWATCH_PORT=20443
-Environment=GASWATCH_CERTFILE=/etc/letsencrypt/live/keifu.ca/fullchain.pem
-Environment=GASWATCH_KEYFILE=/etc/letsencrypt/live/keifu.ca/privkey.pem
-Environment=GASWATCH_GOOGLE_REDIRECT_URI=https://gas.keifu.ca/auth/google/callback
+Environment=GASWATCH_CERTFILE=/etc/letsencrypt/live/example.com/fullchain.pem
+Environment=GASWATCH_KEYFILE=/etc/letsencrypt/live/example.com/privkey.pem
+Environment=GASWATCH_GOOGLE_REDIRECT_URI=https://gas.example.com/auth/google/callback
 Environment=GASWATCH_ALLOWED_DOMAINS=gmail.com
 ExecStart=/usr/bin/python3 /opt/gasbuddy/dashboard.py
 Restart=on-failure

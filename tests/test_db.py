@@ -19,7 +19,7 @@ class DatabaseWriteTest(unittest.TestCase):
         self.assertEqual(get_user_role(self.conn, "unknown@example.com"), "user")
 
     def test_get_user_role_returns_admin_for_seeded_user(self) -> None:
-        self.assertEqual(get_user_role(self.conn, "keiicilam@gmail.com"), "admin")
+        self.assertEqual(get_user_role(self.conn, "admin@example.com"), "admin")
 
     def test_record_city_result_groups_station_by_actual_locality(self) -> None:
         scan_id = start_scan(self.conn, 1)

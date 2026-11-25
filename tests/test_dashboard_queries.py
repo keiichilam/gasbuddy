@@ -271,13 +271,13 @@ class GoogleAuthTest(unittest.TestCase):
         env = {
             "GASWATCH_GOOGLE_CLIENT_ID": "client-id",
             "GASWATCH_GOOGLE_CLIENT_SECRET": "secret",
-            "GASWATCH_GOOGLE_REDIRECT_URI": "https://gas.keifu.ca/auth/google/callback",
+            "GASWATCH_GOOGLE_REDIRECT_URI": "https://gas.example.com/auth/google/callback",
         }
         with patch.dict(os.environ, env, clear=True):
             url = dashboard.google_auth_url("abc")
 
         self.assertIn("client_id=client-id", url)
-        self.assertIn("redirect_uri=https%3A%2F%2Fgas.keifu.ca%2Fauth%2Fgoogle%2Fcallback", url)
+        self.assertIn("redirect_uri=https%3A%2F%2Fgas.example.com%2Fauth%2Fgoogle%2Fcallback", url)
         self.assertIn("state=abc", url)
 
     def test_google_user_allowed_requires_verified_email(self) -> None:
@@ -360,7 +360,7 @@ class RoleBasedAuthTest(unittest.TestCase):
 
         with (
             patch.dict(os.environ, {"GASWATCH_GOOGLE_CLIENT_ID": "id", "GASWATCH_GOOGLE_CLIENT_SECRET": "secret"}, clear=True),
-            patch("dashboard.verify_session_token", return_value={"email": "keiicilam@gmail.com"}),
+            patch("dashboard.verify_session_token", return_value={"email": "admin@example.com"}),
         ):
             handler = Handler(Path(self.db_path))
             self.assertTrue(handler.is_admin())

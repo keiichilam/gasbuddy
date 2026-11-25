@@ -42,7 +42,7 @@ AUTH_SESSION_TTL = 7 * 24 * 60 * 60
 GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo"
-DEFAULT_GOOGLE_REDIRECT_URI = "https://gas.keifu.ca/auth/google/callback"
+DEFAULT_GOOGLE_REDIRECT_URI = "https://gas.example.com/auth/google/callback"
 
 LOYALTY_ID_RE = re.compile(r"^[a-z0-9_]+$")
 

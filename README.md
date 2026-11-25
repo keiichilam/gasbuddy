@@ -59,12 +59,13 @@ GASWATCH_RETRIES=2
 GASWATCH_RETRY_DELAY=30
 GASWATCH_HOST=0.0.0.0
 GASWATCH_PORT=20443
-GASWATCH_CERTFILE=/etc/letsencrypt/live/gas.keifu.ca/fullchain.pem
-GASWATCH_KEYFILE=/etc/letsencrypt/live/gas.keifu.ca/privkey.pem
+GASWATCH_CERTFILE=/etc/letsencrypt/live/gas.example.com/fullchain.pem
+GASWATCH_KEYFILE=/etc/letsencrypt/live/gas.example.com/privkey.pem
 GASWATCH_GOOGLE_CLIENT_ID=<google-oauth-client-id>
 GASWATCH_GOOGLE_CLIENT_SECRET=<google-oauth-client-secret>
-GASWATCH_GOOGLE_REDIRECT_URI=https://gas.keifu.ca/auth/google/callback
+GASWATCH_GOOGLE_REDIRECT_URI=https://gas.example.com/auth/google/callback
 GASWATCH_ALLOWED_DOMAINS=gmail.com
+GASWATCH_ADMIN_EMAIL=you@gmail.com
 # Optional stricter allow-list:
 # GASWATCH_ALLOWED_EMAILS=you@gmail.com,other@gmail.com
 ```
@@ -78,7 +79,7 @@ bash scripts/install_cron.sh
 This installs:
 
 ```cron
-0 * * * * cd /home/openclaw/project/gasbuddy && python3 scan.py >> /home/openclaw/project/gasbuddy/logs/scan.log 2>&1
+0 * * * * cd /home/youruser/project/gasbuddy && python3 scan.py >> /home/youruser/project/gasbuddy/logs/scan.log 2>&1
 ```
 
 To pass scan flags into the cron job:
@@ -93,7 +94,7 @@ SCAN_ARGS="--max-pages 1 --city-delay 12" bash scripts/install_cron.sh
 python3 dashboard.py --host 0.0.0.0 --port 20443
 ```
 
-Open `http://127.0.0.1:20443/` locally, or use the host LAN address from another machine, for example `http://192.168.4.236:20443/`.
+Open `http://127.0.0.1:20443/` locally, or use the host LAN address from another machine, for example `http://192.168.1.50:20443/`.
 
 The dashboard currently exposes:
 
@@ -116,8 +117,8 @@ GASWATCH_GOOGLE_CLIENT_SECRET=<google-oauth-client-secret>
 For the Google Cloud OAuth client, configure:
 
 ```text
-Authorized JavaScript origins: https://gas.keifu.ca
-Authorized redirect URIs:    https://gas.keifu.ca/auth/google/callback
+Authorized JavaScript origins: https://gas.example.com
+Authorized redirect URIs:    https://gas.example.com/auth/google/callback
 ```
 
 Access can be restricted with either setting. `GASWATCH_ALLOWED_EMAILS` is the strictest option and wins when present; otherwise `GASWATCH_ALLOWED_DOMAINS` allows any verified Google account in those domains. The deployed service defaults the domain allow-list to `gmail.com`.
@@ -125,6 +126,7 @@ Access can be restricted with either setting. `GASWATCH_ALLOWED_EMAILS` is the s
 ```bash
 GASWATCH_ALLOWED_EMAILS=you@gmail.com,other@gmail.com
 GASWATCH_ALLOWED_DOMAINS=gmail.com
+GASWATCH_ADMIN_EMAIL=you@gmail.com
 ```
 
 ## Common Commands
@@ -141,7 +143,7 @@ make cron
 
 ## System Service
 
-The dashboard runs under systemd from `/opt/gasbuddy` with HTTPS via the Let's Encrypt certificate for `gas.keifu.ca`.
+The dashboard runs under systemd from `/opt/gasbuddy` with HTTPS via the Let's Encrypt certificate for `gas.example.com`.
 
 ### Deploy
 
@@ -182,12 +184,13 @@ journalctl -u gasbuddy-dashboard.service -f
 The service reads cert paths from environment variables (see `deploy/gasbuddy-dashboard.service`):
 
 ```
-GASWATCH_CERTFILE=/etc/letsencrypt/live/gas.keifu.ca/fullchain.pem
-GASWATCH_KEYFILE=/etc/letsencrypt/live/gas.keifu.ca/privkey.pem
+GASWATCH_CERTFILE=/etc/letsencrypt/live/gas.example.com/fullchain.pem
+GASWATCH_KEYFILE=/etc/letsencrypt/live/gas.example.com/privkey.pem
 GASWATCH_GOOGLE_CLIENT_ID=<google-oauth-client-id>
 GASWATCH_GOOGLE_CLIENT_SECRET=<google-oauth-client-secret>
-GASWATCH_GOOGLE_REDIRECT_URI=https://gas.keifu.ca/auth/google/callback
+GASWATCH_GOOGLE_REDIRECT_URI=https://gas.example.com/auth/google/callback
 GASWATCH_ALLOWED_DOMAINS=gmail.com
+GASWATCH_ADMIN_EMAIL=you@gmail.com
 # Optional stricter allow-list:
 # GASWATCH_ALLOWED_EMAILS=you@gmail.com,other@gmail.com
 ```
@@ -196,8 +199,8 @@ The dashboard can also be started manually with explicit cert paths:
 
 ```bash
 python3 dashboard.py --host 0.0.0.0 --port 20443 \
-  --certfile /etc/letsencrypt/live/gas.keifu.ca/fullchain.pem \
-  --keyfile  /etc/letsencrypt/live/gas.keifu.ca/privkey.pem
+  --certfile /etc/letsencrypt/live/gas.example.com/fullchain.pem \
+  --keyfile  /etc/letsencrypt/live/gas.example.com/privkey.pem
 ```
 
 Open `https://<host>:20443/` in a browser.
